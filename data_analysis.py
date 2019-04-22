@@ -22,7 +22,7 @@ def create_bar_chart(df, image_title='lastfm-artists-played-most', title='Artist
     plt.clf()
 
 
-
+# Prepare data
 scrobbles = pd.read_csv('data/scrobbles.csv')
 scrobbles = scrobbles.drop('timestamp', axis=1)
 scrobbles['timestamp'] = pd.to_datetime(scrobbles['datetime']) 
@@ -108,6 +108,7 @@ ax.legend(lines, loc='upper right', bbox_to_anchor=(1.33, 1.016))
 plt.savefig('images/lastfm-scrobbles-top-artists-years.png', dpi=96, bbox_inches='tight')
 plt.clf()
 
+# Analyse top 25 artists Pre and Post 2011
 artists_most_25 = artists_most.head(25)
 create_bar_chart(artists_most_25)
 top_2007_2010 = scrobbles[scrobbles['year'] < 2011]['artist'].value_counts()
@@ -116,14 +117,21 @@ top_after_2011 = scrobbles[scrobbles['year'] > 2011]['artist'].value_counts()
 create_bar_chart(top_after_2011.head(25), 'lastfm-top-artists-after-2011', 'Top 25 artists I have listened to after 2011')
 
 # compare the pre and post 2011 top artists and makes a list of artist that are new for post 2011
-new_entries = [i for i in top_after_2011.head(25).index if i not in top_2007_2010.head(25).index]
+new_entries_vs_pre2011 = [i for i in top_after_2011.head(25).index if i not in top_2007_2010.head(25).index]
+new_entries_compared_overall = [i for i in top_after_2011.head(25).index if i in artists_most_25.index]
+print(new_entries_compared_overall)
+print(len(new_entries_compared_overall))
 
-
+# find out per year how many artists I listen to
 year_on_year = scrobbles.groupby('year')['artist'].nunique()
-create_bar_chart(year_on_year, 'lastfm-unqiue-artsists-per-year', "Unique Artists listened to per year")
+create_bar_chart(year_on_year, 'lastfm-unqiue-artsists-per-year', "Number of artists listened to per year")
+
+# Find artists that are new to much per year
 never_listened_to_df = scrobbles.drop_duplicates(['artist'])
 never_listened_to_count = never_listened_to_df.groupby('year')['artist'].size()
 create_bar_chart(never_listened_to_count, 'lastfm-new-artist', 'First time I listened to an artist')
+
+# Looking at how many tracks of a particular artists I listen too. 
 tracks_per_artist = scrobbles[scrobbles['artist'].isin(artists_most.head(25).index)]
 tracks_per_artist = tracks_per_artist.drop_duplicates(['track'])
 tracks_per_artist = tracks_per_artist['artist'].value_counts()
