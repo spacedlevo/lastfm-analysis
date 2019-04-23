@@ -11,13 +11,13 @@ def get_colors(cmap, n, start=0., stop=1., alpha=1., reverse=False):
     colors = [(r, g, b, alpha) for r, g, b, _ in colors]
     return list(reversed(colors)) if reverse else colors
 
-def create_bar_chart(df, image_title='lastfm-artists-played-most', title='Artists I have played the most'):
+def create_bar_chart(df, image_title='lastfm-artists-played-most', title='Artists I have played the most', ylabel='Number of plays'):
     ax = df.plot(kind='bar', figsize=[11, 7], width=0.8, alpha=0.7, color='#B90000', edgecolor=None, zorder=2)
     ax.yaxis.grid(True)
     ax.set_xticklabels(df.index, rotation=45, rotation_mode='anchor', ha='right')
     ax.set_title(f'{title}')
     ax.set_xlabel('')
-    ax.set_ylabel('Number of plays')
+    ax.set_ylabel(ylabel)
     plt.savefig(f'images/{image_title}.png', dpi=96, bbox_inches='tight')
     plt.clf()
 
@@ -124,12 +124,12 @@ print(len(new_entries_compared_overall))
 
 # find out per year how many artists I listen to
 year_on_year = scrobbles.groupby('year')['artist'].nunique()
-create_bar_chart(year_on_year, 'lastfm-unqiue-artsists-per-year', "Number of artists listened to per year")
+create_bar_chart(year_on_year, 'lastfm-unqiue-artsists-per-year', "Number of artists listened to per year", 'Number of artists')
 
 # Find artists that are new to much per year
 never_listened_to_df = scrobbles.drop_duplicates(['artist'])
 never_listened_to_count = never_listened_to_df.groupby('year')['artist'].size()
-create_bar_chart(never_listened_to_count, 'lastfm-new-artist', 'First time I listened to an artist')
+create_bar_chart(never_listened_to_count, 'lastfm-new-artist', 'First time I listened to an artist', 'Number of artists')
 
 # Looking at how many tracks of a particular artists I listen too. 
 tracks_per_artist = scrobbles[scrobbles['artist'].isin(artists_most.head(25).index)]
