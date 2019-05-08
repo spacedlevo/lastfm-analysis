@@ -84,7 +84,9 @@ plt.savefig('images/lastfm-scrobbles-per-weekday.png', dpi=96, bbox_inches='tigh
 artists_most = scrobbles['artist'].value_counts()
 n = 5
 plays = scrobbles[scrobbles['artist'].isin(artists_most.head(n).index)]
+print(plays.head())
 plays = plays.groupby(['artist','year']).count().groupby(level=[0]).cumsum()['track']
+print(plays.head())
 plays = plays.unstack().T.fillna(method='ffill').T.stack()
 top_artists = plays.index.levels[0]
 
@@ -119,8 +121,6 @@ create_bar_chart(top_after_2011.head(25), 'lastfm-top-artists-after-2011', 'Top 
 # compare the pre and post 2011 top artists and makes a list of artist that are new for post 2011
 new_entries_vs_pre2011 = [i for i in top_after_2011.head(25).index if i not in top_2007_2010.head(25).index]
 new_entries_compared_overall = [i for i in top_after_2011.head(25).index if i in artists_most_25.index]
-print(new_entries_compared_overall)
-print(len(new_entries_compared_overall))
 
 # find out per year how many artists I listen to
 year_on_year = scrobbles.groupby('year')['artist'].nunique()
