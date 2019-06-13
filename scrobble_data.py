@@ -1,7 +1,6 @@
 import requests
 from config import creds
 import time
-import json
 import pandas as pd
 
 page = 1

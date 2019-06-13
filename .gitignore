@@ -145,4 +145,5 @@ dmypy.json
 #config file
 config.py
 *.mp4
+.cache*
 # End of https://www.gitignore.io/api/linux,python
