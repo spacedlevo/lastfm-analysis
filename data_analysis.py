@@ -7,7 +7,7 @@ import numpy as np
 def get_colors(cmap, n, start=0., stop=1., alpha=1., reverse=False):
     '''return n-length list of rgba colors from the passed colormap name and alpha,
        limit extent by start/stop values and reverse list order if flag is true'''
-    colors = [cm.get_cmap(cmap)(x) for x in np.linspace(start, stop, n)]
+    colors = [plt.get_cmap(cmap)(x) for x in np.linspace(start, stop, n)]
     colors = [(r, g, b, alpha) for r, g, b, _ in colors]
     return list(reversed(colors)) if reverse else colors
 
@@ -31,6 +31,7 @@ scrobbles = scrobbles.replace(to_replace='Maxïmo Park', value='Maximo Park')
 scrobbles = scrobbles[scrobbles['artist'] != 'BBC Radio 4']
 scrobbles = scrobbles[scrobbles['artist'] != 'guardian.co.uk']
 scrobbles = scrobbles[scrobbles['artist'] != 'cnet.com']
+scrobbles = scrobbles.sort_values(by='timestamp')
 
 # Convert UTC timestamps to GMT
 gmt = pytz.timezone('Europe/London')
@@ -57,7 +58,7 @@ ax.set_xlim((year_counts.index[0], year_counts.index[-1]))
 
 ax.yaxis.grid(True)
 ax.xaxis.grid(True)
-ax.set_ylim(0, 7000)
+ax.set_ylim(0, 25000)
 ax.set_xticks(year_counts.index)
 ax.set_ylabel('Number of plays')
 ax.set_xlabel('')
@@ -90,7 +91,7 @@ print(plays.head())
 plays = plays.unstack().T.fillna(method='ffill').T.stack()
 top_artists = plays.index.levels[0]
 
-fig, ax = plt.subplots(figsize=[8, 6])
+fig, ax = plt.subplots(figsize=[15, 10])
 colors = get_colors('Set1', n)
 lines = []
 
@@ -136,7 +137,7 @@ tracks_per_artist = scrobbles[scrobbles['artist'].isin(artists_most.head(25).ind
 tracks_per_artist = tracks_per_artist.drop_duplicates(['track'])
 tracks_per_artist = tracks_per_artist['artist'].value_counts()
 
-ax = tracks_per_artist.sort_values().plot(kind='barh', figsize=[6, 10], width=0.8, alpha=0.6, 
+ax = tracks_per_artist.sort_values().plot(kind='barh', figsize=[10, 15], width=0.8, alpha=0.6, 
                                     color='#2C3E50', edgecolor=None, zorder=2)
 ax.xaxis.grid(True)
 ax.set_xlabel('Number of plays')
